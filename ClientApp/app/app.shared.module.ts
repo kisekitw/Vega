@@ -1,8 +1,10 @@
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { RouterModule } from '@angular/router';
+
 
 import { AppComponent } from './components/app/app.component';
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
@@ -13,7 +15,7 @@ import { VehicleFormComponent } from './components/vehicle-form/vehicle-form.com
 import { MakeService } from './services/make.service';
 
 @NgModule({
-    declarations: [
+    declarations: [ 
         AppComponent,
         NavMenuComponent,
         CounterComponent,
