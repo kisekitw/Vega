@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
 using vega.Persistence;
 
 namespace vega
@@ -28,6 +29,12 @@ namespace vega
             services.AddAutoMapper();
             services.AddDbContext<VegaDbContext>(opitons => opitons.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddMvc();
+            // https://goo.gl/y4d51b
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Vega API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +54,17 @@ namespace vega
             }
 
             app.UseStaticFiles();
+
+             // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vega API V1");
+                c.RoutePrefix = "VegaAPI";
+            });
 
             app.UseMvc(routes =>
             {
