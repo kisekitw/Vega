@@ -5,14 +5,22 @@ namespace vega.Persistence
 {
     public class VegaDbContext:DbContext
     {
+        public DbSet<Make> Makes { get; set; }
+
+        public DbSet<Feature> Features { get; set; }
+
         public VegaDbContext(DbContextOptions<VegaDbContext> options)
         : base(options)
         {
             
         }
 
-        public DbSet<Make> Makes { get; set; }
-
-        public DbSet<Feature> Features { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
+            // add m to n relation's pk
+            modelBuilder.Entity<VehicleFeature>().HasKey(vf => new {
+                vf.FeatureId, vf.VehicleId
+            });
+        }
+        
     }
 }
