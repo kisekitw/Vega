@@ -13,6 +13,7 @@ namespace vega.Models
         public int ModelId { get; set; }    
         public Model Model { get; set; }
         public bool IsRegistered { get; set; }
+
         [Required]
         [StringLength(255)]
         public string ContactName { get; set; } 
@@ -21,6 +22,7 @@ namespace vega.Models
         public string ContactPhone { get; set; }  
         [StringLength(255)]  
         public string ContactEmail { get; set; }
+
         public DateTime UpdateTime { get; set; }    
 
         public ICollection<VehicleFeature> Features { get; set; }
