@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -22,11 +23,23 @@ namespace vega.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateVehicle([FromBody]VehicleResource vehicleResource)
         {
+            if(!ModelState.IsValid){
+                return BadRequest(ModelState);
+            }
+            
+            // var model = await context.Models.FindAsync(vehicleResource.ModelId);
+            // if(model == null)
+            // {
+            //     ModelState.AddModelError("ModelId", "Invalid ModelId.");
+            //     return BadRequest(ModelState);
+            // }
+            
             // In order to create a vehicle instance into database
             // input data type: VehicleResource
             // output data type: Vehicle
             // so we need to map VehicleResource to Vehicle
             var vehicle = mapper.Map<VehicleResource, Vehicle>(vehicleResource);
+            vehicle.UpdateTime = DateTime.Now;
             context.Vehicles.Add(vehicle);
             await context.SaveChangesAsync();
 
