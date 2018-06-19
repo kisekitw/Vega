@@ -14,12 +14,12 @@ namespace vega.Controllers
     public class VehiclesController : Controller
     {
         private readonly IMapper mapper;
-        private readonly VegaDbContext context;
         private readonly IVehicleRepository vehicleRepository;
-        public VehiclesController(IMapper mapper, VegaDbContext context, IVehicleRepository vehicleRepository)
+        private readonly IUnitOfWork unitOfWork;
+        public VehiclesController(IMapper mapper, IVehicleRepository vehicleRepository, IUnitOfWork unitOfWork)
         {
+            this.unitOfWork = unitOfWork;
             this.vehicleRepository = vehicleRepository;
-            this.context = context;
             this.mapper = mapper;
         }
 
@@ -45,7 +45,7 @@ namespace vega.Controllers
             var vehicle = mapper.Map<SaveVehicleResource, Vehicle>(vehicleResource);
             vehicle.UpdateTime = DateTime.Now;
             vehicleRepository.Add(vehicle);
-            await context.SaveChangesAsync();
+            await unitOfWork.CompleteAsync();
 
             // await context.Models.Include(m => m.Make).SingleOrDefaultAsync(m => m.Id == vehicle.ModelId);
             vehicle = await vehicleRepository.GetVehicle(vehicle.Id);
@@ -73,7 +73,7 @@ namespace vega.Controllers
             mapper.Map<SaveVehicleResource, Vehicle>(vehicleResource, vehicle);
             vehicle.UpdateTime = DateTime.Now;
 
-            await context.SaveChangesAsync();
+            await unitOfWork.CompleteAsync();
 
             var result = mapper.Map<Vehicle, SaveVehicleResource>(vehicle);
             return Ok(result);
@@ -82,7 +82,7 @@ namespace vega.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVehicle(int id)
         {
-            var vehicle = await context.Vehicles.FindAsync(id);
+            var vehicle = await vehicleRepository.GetVehicle(id, includeRelated: false);;
 
             if (vehicle == null)
             {
@@ -90,7 +90,7 @@ namespace vega.Controllers
             }
 
             vehicleRepository.Remove(vehicle);
-            await context.SaveChangesAsync();
+            await unitOfWork.CompleteAsync();
 
             return Ok(id);
         }
